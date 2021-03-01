@@ -5,7 +5,7 @@
 ;; Author: Lassi Kortela <lassi@lassi.io>
 ;; URL: https://github.com/lassik/emacs-desktop-mail-user-agent
 ;; Version: 0.1.0
-;; Package-Requires: ((emacs "24"))
+;; Package-Requires: ((emacs "24.3"))
 ;; Keywords: mail
 
 ;; This file is not part of GNU Emacs.
