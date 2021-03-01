@@ -137,9 +137,9 @@ The arguments TO, SUBJECT, OTHER-HEADERS, CONTINUE,
 SWITCH-FUNCTION, YANK-ACTION, SEND-ACTIONS, RETURN-ACTION are as
 for `compose-mail'; nil indicates a missing argument."
   (unless desktop-mail-user-agent-fallback
-    (error "Set `desktop-mail-user-agent-fallback' for complex jobs"))
+    (user-error "Set `desktop-mail-user-agent-fallback' for complex jobs"))
   (when (eq desktop-mail-user-agent-fallback 'desktop-mail-user-agent)
-    (error "Loop in desktop-mail-user-agent-fallback"))
+    (user-error "Loop in desktop-mail-user-agent-fallback"))
   (let ((composefunc
          (or (get desktop-mail-user-agent-fallback 'composefunc)
              (error "No composefunc for %S"
