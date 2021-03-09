@@ -42,7 +42,7 @@ delegate the job to this agent."
   :type 'function
   :group 'desktop-mail-user-agent)
 
-(defvar desktop-mail-user-agent--hook '()
+(defvar desktop-mail-user-agent--hook nil
   "Internal variable expected by `define-mail-user-agent'.
 
 Never set this globally; leave it nil.
@@ -191,7 +191,9 @@ for `compose-mail'; nil indicates a missing argument."
        yank-action
        send-actions
        return-action)
-      (desktop-mail-user-agent--compose-desktop to subject)))
+      (desktop-mail-user-agent--compose-desktop
+       to
+       subject)))
 
 (defun desktop-mail-user-agent--send ()
   "Internal function expected by `define-mail-user-agent'."
