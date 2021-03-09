@@ -208,6 +208,7 @@ for `compose-mail'; nil indicates a missing argument."
   "Internal function expected by `define-mail-user-agent'."
   (error "`desktop-mail-user-agent--abort' called"))
 
+;;;###autoload
 (defun desktop-mail-user-agent ()
   "Use desktop mail client to send mail."
   (unless desktop-mail-user-agent-fallback
