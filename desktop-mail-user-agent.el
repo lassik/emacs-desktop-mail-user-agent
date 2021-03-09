@@ -196,9 +196,9 @@ for `compose-mail'; nil indicates a missing argument."
        yank-action
        send-actions
        return-action)
-      (desktop-mail-user-agent--compose-desktop
-       to
-       subject)))
+    (desktop-mail-user-agent--compose-desktop
+     to
+     subject)))
 
 (defun desktop-mail-user-agent--send ()
   "Internal function expected by `define-mail-user-agent'."
