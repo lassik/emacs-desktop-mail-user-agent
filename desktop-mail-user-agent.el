@@ -53,9 +53,23 @@ on this hook variable.  The hook is supposed to be triggered when
 mail is sent, but since we launch an external mail program, we
 can't detect when that happens.
 
-As a compromise, we detect when the caller has added something to
-this hook and delegate our job to the fallback user agent in that
-case.")
+That leaves us with no choice except to raise an error when
+another package is trying to use a send hook.  We use this
+variable as a tripwire to detect such packages.")
+
+(defun desktop-mail-user-agent--assert-no-hook ()
+  "Internal function to check that a hook has not been installed."
+  (when desktop-mail-user-agent--hook
+    (error
+     "An Emacs package is calling `compose-mail' with a hook.
+
+Unfortunately `desktop-mail-user-agent' is not able to support
+hooks.  The maintainer of `desktop-mail-user-agent' may have
+advice on how to solve the problem with this particular package.
+
+The hook that the package is trying to use is:
+%S"
+     desktop-mail-user-agent--hook)))
 
 (defun desktop-mail-user-agent--build-mailto-uri (to subject)
   "Internal function to build a mailto: URI from TO and SUBJECT.
@@ -140,26 +154,17 @@ for `compose-mail'; nil indicates a missing argument."
     (user-error "Set `desktop-mail-user-agent-fallback' for complex jobs"))
   (when (eq desktop-mail-user-agent-fallback 'desktop-mail-user-agent)
     (user-error "Loop in desktop-mail-user-agent-fallback"))
-  (let ((composefunc
-         (or (get desktop-mail-user-agent-fallback 'composefunc)
-             (error "No composefunc for %S"
-                    desktop-mail-user-agent-fallback)))
-        (hookvar
-         (or (get desktop-mail-user-agent-fallback 'hookvar)
-             'mail-send-hook)))
-    (let ((oldhook (symbol-value hookvar)))
-      (set hookvar desktop-mail-user-agent--hook)
-      (unwind-protect
-          (funcall composefunc
-                   to
-                   subject
-                   other-headers
-                   continue
-                   switch-function
-                   yank-action
-                   send-actions
-                   return-action)
-        (set hookvar oldhook)))))
+  (funcall (or (get desktop-mail-user-agent-fallback 'composefunc)
+               (error "%S does not have a compose function"
+                      desktop-mail-user-agent-fallback))
+           to
+           subject
+           other-headers
+           continue
+           switch-function
+           yank-action
+           send-actions
+           return-action))
 
 (defun desktop-mail-user-agent--compose
     (&optional to
@@ -175,8 +180,8 @@ for `compose-mail'; nil indicates a missing argument."
 The arguments TO, SUBJECT, OTHER-HEADERS, CONTINUE,
 SWITCH-FUNCTION, YANK-ACTION, SEND-ACTIONS, RETURN-ACTION are as
 for `compose-mail'; nil indicates a missing argument."
-  (if (or desktop-mail-user-agent--hook
-          other-headers
+  (desktop-mail-user-agent--assert-no-hook)
+  (if (or other-headers
           continue
           switch-function
           yank-action
