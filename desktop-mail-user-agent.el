@@ -45,7 +45,7 @@ delegate the job to this agent."
 (defvar desktop-mail-user-agent--hook nil
   "Internal variable expected by `define-mail-user-agent'.
 
-Never set this globally; leave it nil.
+Never set this; leave it nil.
 
 The documentation for `define-mail-user-agent' says callers that
 use our `mail-user-agent' may install a hook function temporarily
@@ -59,17 +59,17 @@ variable as a tripwire to detect such packages.")
 
 (defun desktop-mail-user-agent--assert-no-hook ()
   "Internal function to check that a hook has not been installed."
-  (when desktop-mail-user-agent--hook
-    (error
-     "An Emacs package is calling `compose-mail' with a hook.
+  (let ((hook desktop-mail-user-agent--hook))
+    (when hook
+      (setq desktop-mail-user-agent--hook nil)
+      (error "An Emacs package is calling `compose-mail' with a hook.
 
 Unfortunately `desktop-mail-user-agent' is not able to support
 hooks.  The maintainer of `desktop-mail-user-agent' may have
 advice on how to solve the problem with this particular package.
 
 The hook that the package is trying to use is:
-%S"
-     desktop-mail-user-agent--hook)))
+%S" hook))))
 
 (defun desktop-mail-user-agent--build-mailto-uri (to subject)
   "Internal function to build a mailto: URI from TO and SUBJECT.
