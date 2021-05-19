@@ -184,7 +184,7 @@ for `compose-mail'; nil indicates a missing argument."
   (if (or other-headers
           continue
           switch-function
-          yank-action
+          ;; `yank-action' can be safely ignored.
           send-actions
           return-action)
       (desktop-mail-user-agent--compose-fallback
